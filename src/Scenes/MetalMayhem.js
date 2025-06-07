@@ -1,20 +1,19 @@
-class Platformer extends Phaser.Scene {
+class Level2 extends Phaser.Scene {
     constructor() {
-        super("platformerScene");
+        super("level2");
     }
 
     init() {
-        // variables and settings
-        this.ACCELERATION = 400;
-        this.DRAG = 600;    // DRAG < ACCELERATION = icy slide
+        this.ACCELERATION = 600;
+        this.DRAG = 600;  
         this.physics.world.gravity.y = 1400;
         this.JUMP_VELOCITY = -600;
         this.PARTICLE_VELOCITY = 50;
         this.SCALE = 2.0;
         this.PLAYERSCORE = 0;
-        this.die = false;
         this.jumpCount = 0;
         this.maxJumps = 2;
+        this.sceneChanging = false;
     }
 
     create() {
@@ -27,8 +26,7 @@ class Platformer extends Phaser.Scene {
 
         this.registry.set("snore", this.sound.add("snoring", { loop: true}));
 
-        let backdrop = this.add.rectangle(0, 0, this.cameras.main.width, this.cameras.main.height, 0xFFFFFF).setOrigin(0, 0).setScrollFactor(0).setDepth(-11);
-        let sky = this.add.rectangle(0, 0, this.cameras.main.width, this.cameras.main.height, 0xFFB6C1, 0.9).setOrigin(0, 0).setScrollFactor(0).setDepth(-11);
+        let sky = this.add.rectangle(0, 0, this.cameras.main.width, this.cameras.main.height, 0x61462c, 0.9).setOrigin(0, 0).setScrollFactor(0).setDepth(-11);
 
         this.add.image(0, 300, "cloud").setOrigin(0, 0).setScrollFactor(0.1).setDepth(-10).setScale(1.2).setAlpha(0.3);
         this.add.image(1199, 300, "cloud").setOrigin(0, 0).setScrollFactor(0.1).setDepth(-10).setScale(1.2).setAlpha(0.3);
@@ -38,28 +36,21 @@ class Platformer extends Phaser.Scene {
         this.add.image(0, 595, "hills").setOrigin(0, 0).setScrollFactor(0.3).setDepth(-9);
         this.add.image(1000, 595, "hills").setOrigin(0, 0).setScrollFactor(0.3).setDepth(-9);
 
-        this.add.image(150, 510, "tree1").setOrigin(0, 0).setScrollFactor(0.3).setDepth(-8).setScale(0.4);
-        this.add.image(300, 580, "tree1").setOrigin(0, 0).setScrollFactor(0.3).setDepth(-8).setScale(0.3);
-        this.add.image(1050, 550, "tree1").setOrigin(0, 0).setScrollFactor(0.3).setDepth(-8).setScale(0.2);
-        this.add.image(1100, 530, "tree1").setOrigin(0, 0).setScrollFactor(0.3).setDepth(-8).setScale(0.3);
-
-
-
 
         // Create a new tilemap game object which uses 18x18 pixel tiles, and is
         // 90 tiles wide and 40 tiles tall.
-        this.map = this.add.tilemap("Napstronaut_Map", 18, 18, 90, 40);
+        this.map = this.add.tilemap("Metal_Mayhem", 18, 18, 90, 40);
 
         // Add a tileset to the map
         // First parameter: name we gave the tileset in Tiled
         // Second parameter: key for the tilesheet (from this.load.image in Load.js)
         this.kennyTileset = this.map.addTilesetImage("kenny_tilemap_packed", "kenny_tilemap_tiles");
-        this.foodTileset = this.map.addTilesetImage("food_tilemap_packed", "food_tilemap_tiles");
+        this.industrialTileset = this.map.addTilesetImage("industrial_tilemap_packed", "industrial_tilemap_packed");
 
         // Create a layer
-        this.layer1 = this.map.createLayer("Layer1", this.foodTileset, 0, 0);
-        this.layer2 = this.map.createLayer("Layer2", this.foodTileset, 0, 0);
-        this.layer3 = this.map.createLayer("Layer3", this.foodTileset, 0, 0);
+        this.layer1 = this.map.createLayer("Layer1", this.industrialTileset, 0, 0);
+        this.layer2 = this.map.createLayer("Layer2", this.industrialTileset, 0, 0);
+        this.layer3 = this.map.createLayer("Layer3", this.industrialTileset, 0, 0);
 
         this.spikeTiles = this.layer3.filterTiles(tile => tile.properties.spikes);
 
@@ -86,11 +77,10 @@ class Platformer extends Phaser.Scene {
             name: "bed",
             key: "bed_tilemap_sheet",
             frame: 0
-        })
+        });
 
         this.physics.world.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels + 100);
-        // Since createFromObjects returns an array of regular Sprites, we need to convert 
-        // them into Arcade Physics sprites (STATIC_BODY, so they don't move) 
+        
         this.physics.world.enable(this.coins, Phaser.Physics.Arcade.STATIC_BODY);
         this.coinGroup = this.add.group(this.coins);
 
@@ -98,6 +88,24 @@ class Platformer extends Phaser.Scene {
 
         this.physics.world.enable(this.bed, Phaser.Physics.Arcade.STATIC_BODY);
         this.bedGroup = this.add.group(this.bed);
+
+        this.doors = this.map.createFromObjects("Doors", {
+             name: "door", 
+             key: "industrial_tilemap_sheet", 
+             frame: 28 
+        });
+
+        this.doors.forEach(door => {
+            this.physics.world.enable(door, Phaser.Physics.Arcade.STATIC_BODY);
+            door.doorNum = door.data?.get("number") || 0;
+            door.linkedTo = door.data?.get("linkedTo") || 0;
+            console.log(`Loaded door: doorNum=${door.doorNum} → linkedTo=${door.linkedTo}`);
+        });
+        
+        this.doorGroup = this.add.group(this.doors);
+        
+        this.teleportKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+        
 
         // set up player avatar
         my.sprite.player = this.physics.add.sprite(spawnPoint.x, spawnPoint.y, "platformer_characters", "tile_0006.png");
@@ -163,6 +171,17 @@ class Platformer extends Phaser.Scene {
 
         my.vfx.coin.stop();
 
+        my.vfx.disintegrate = this.add.particles(0, 0, "kenny-particles", {
+            frame: ['smoke_03.png', 'smoke_09.png'],
+            scale: { start: 0.07, end: 0 },
+            lifespan: 300,
+            speed: { min: -100, max: 100 },
+            gravityY: -50,
+            alpha: { start: 0.5, end: 0 }
+        });
+        my.vfx.disintegrate.stop();
+
+
         this.physics.add.overlap(my.sprite.player, this.bedGroup, () => {
             if (this.sceneChanging) return;
             this.sceneChanging = true;
@@ -180,9 +199,15 @@ class Platformer extends Phaser.Scene {
 
                 this.cameras.main.once('camerafadeoutcomplete', () => {
                     this.registry.set("score", this.PLAYERSCORE);
+                    this.registry.set("previousScene", this.scene.key);
                     this.scene.start("victoryScene");
                 });
             });
+        });
+
+        this.physics.add.overlap(my.sprite.player, this.doorGroup, (player,door) => {
+            door.setFrame(44);
+            this.currentDoor = door;
         });
         
         this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
@@ -196,7 +221,72 @@ class Platformer extends Phaser.Scene {
             fill: '#ffffff'
         }).setScrollFactor(0);
 
+        this.menu = this.add.container(this.scale.width / 2, this.scale.height / 2); 
+    
+        let bg = this.add.rectangle(0, 0, 350, 250, 0x000000, 0.8);
+        bg.setOrigin(0.5).setScrollFactor(0);
+
+        let menuText = this.add.text(0, -70, 'Paused', { fontSize: '32px', color: '#ffffff', fontFamily: "'Chewy'"}).setOrigin(0.5).setScrollFactor(0);
+        let resumeText = this.add.text(0, -40, 'Click (ESC) to Resume', { fontSize: '16px', color: '#ffffff', fontFamily: "'Chewy'" }).setOrigin(0.5).setScrollFactor(0);
+
+        let restartButton = this.add.text(0, 0, 'Restart Level', { fontSize: '24px', color: '#ffaaaa', fontFamily: "'Chewy'" }).setOrigin(0.5);
+        restartButton.setScrollFactor(0).setInteractive({ useHandCursor: true });
+
+        restartButton.on('pointerdown', () => {
+            this.bgm.stop();
+            this.scene.stop();         
+            this.scene.restart(); 
+        });
+
+        restartButton.on('pointerover', () => {
+            restartButton.setAlpha(0.5);
+        });
+        restartButton.on('pointerout', () => {
+            restartButton.setAlpha(1);
+        });
+
+        let backButton = this.add.text(0, 60, 'Back to Main Menu', { fontSize: '24px', color: '#ffaaaa', fontFamily: "'Chewy'" }).setOrigin(0.5);
+        backButton.setScrollFactor(0).setInteractive({ useHandCursor: true });
+
+        backButton.on('pointerdown', () => {
+            this.bgm.stop();
+            this.scene.stop();         
+            this.scene.start('mainMenu'); 
+        });
+
+        backButton.on('pointerover', () => {
+            backButton.setAlpha(0.5);
+        });
+        backButton.on('pointerout', () => {
+            backButton.setAlpha(1);
+        });
+
+        let levelButton = this.add.text(0, 30, 'Level Select', { fontSize: '24px', color: '#ffaaaa', fontFamily: "'Chewy'" }).setOrigin(0.5);
+        levelButton.setScrollFactor(0).setInteractive({ useHandCursor: true });
+
+        levelButton.on('pointerdown', () => {
+            this.bgm.stop();
+            this.scene.stop();         
+            this.scene.start('levelSelect'); 
+        });
+
+        levelButton.on('pointerover', () => {
+            levelButton.setAlpha(0.5);
+        });
+        levelButton.on('pointerout', () => {
+            levelButton.setAlpha(1);
+        });
+
+        this.menu.add([bg, menuText, resumeText, backButton, levelButton, restartButton]);
+
+        this.menu.setVisible(false);
+
+        this.escapeKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ESC);
+
+        this.menuVisible = false;
+
     }
+    
 
     update() {
         
@@ -252,17 +342,6 @@ class Platformer extends Phaser.Scene {
                 this.jumpReleased = false;
             }
 
-            if (!this.die && my.sprite.player.y > this.map.heightInPixels + 10) {
-                this.die = true; 
-                this.sound.play("death");
-                this.bgm.stop();
-                this.cameras.main.fadeOut(600, 0, 0, 0);
-
-                this.cameras.main.once('camerafadeoutcomplete', () => {
-                    this.scene.restart();
-                });
-            }
-
             let maxSpeed = 300;  
 
             if (my.sprite.player.body.velocity.x > maxSpeed) {
@@ -272,26 +351,58 @@ class Platformer extends Phaser.Scene {
                 my.sprite.player.body.velocity.x = -maxSpeed;
             }
 
-            if (!this.die) {
-                const tile = this.layer3.getTileAtWorldXY(
-                    my.sprite.player.x,
-                    my.sprite.player.y + my.sprite.player.height,
-                    true
-                );
-                if (tile && tile.properties.spikes) {
-                    if (this.die) return; 
-                
-                    this.die = true;
-                    this.sound.play("death");
-                    this.bgm.stop();
-                    this.cameras.main.shake(250, 0.01); 
-                    this.cameras.main.fadeOut(1000, 0, 0, 0);
-                
-                    this.cameras.main.once('camerafadeoutcomplete', () => {
-                        this.scene.restart();
-                    });
+            const tile = this.layer1.getTileAtWorldXY(
+                my.sprite.player.x,
+                my.sprite.player.y + my.sprite.player.height,
+                true
+            );
+
+            if (tile && tile.properties.acid && !this.sceneChanging) {
+                this.sceneChanging = true;
+            
+                this.sound.stopByKey('music');
+                my.vfx.disintegrate.emitParticleAt(my.sprite.player.x, my.sprite.player.y, 50);
+                my.sprite.player.setVisible(false);
+                this.sound.play("acidBurn");
+                my.sprite.player.anims.stop();
+                this.cameras.main.shake(250, 0.01); 
+                this.cameras.main.fadeOut(1000, 0, 0, 0);
+            
+                this.cameras.main.once('camerafadeoutcomplete', () => {
+                    this.scene.restart();
+                });
+            }
+             
+            if (this.currentDoor && Phaser.Input.Keyboard.JustDown(this.teleportKey)) {
+                this.teleportToDoor(this.currentDoor.linkedTo);
+            }
+    
+            if (this.currentDoor && !this.physics.overlap(my.sprite.player, this.currentDoor)) {
+                this.currentDoor.setFrame(28);
+                this.currentDoor = null;
+            }
+
+            if (Phaser.Input.Keyboard.JustDown(this.escapeKey)) {
+                this.menuVisible = !this.menuVisible;
+                this.menu.setVisible(this.menuVisible);
+            
+                if (this.menuVisible) {
+                    this.physics.world.pause(); 
+                } else {
+                    this.physics.world.resume();
                 }
             }
+
     }
-    
+
+    teleportToDoor(targetName) {
+        let targetDoor = this.doorGroup.getChildren().find(door => door.doorNum === targetName);
+        if (targetDoor) {
+            my.sprite.player.x = targetDoor.x;
+            my.sprite.player.y = targetDoor.y;
+            console.log(`Teleported to ${targetName}`);
+        } else {
+            console.warn(`No door found with number: ${targetName}`);
+        }
+    }
 }

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="90" height="40" tilewidth="18" tileheight="18" infinite="0" nextlayerid="5" nextobjectid="25">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="90" height="40" tilewidth="18" tileheight="18" infinite="0" nextlayerid="5" nextobjectid="26">
  <tileset firstgid="1" name="food_tilemap_packed" tilewidth="18" tileheight="18" tilecount="112" columns="16">
   <image source="../../../Downloads/kenney_pixel-platformer-food-expansion/Tilemap/tilemap_packed.png" width="288" height="126"/>
   <tile id="0">
@@ -322,6 +322,16 @@
     <property name="collides" type="bool" value="true"/>
    </properties>
   </tile>
+  <tile id="105">
+   <properties>
+    <property name="spikes" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="106">
+   <properties>
+    <property name="spikes" type="bool" value="true"/>
+   </properties>
+  </tile>
   <tile id="109">
    <properties>
     <property name="collides" type="bool" value="true"/>
@@ -340,6 +350,9 @@
  </tileset>
  <tileset firstgid="113" name="kenny_tilemap_packed" tilewidth="18" tileheight="18" tilecount="180" columns="20">
   <image source="../../../Downloads/kenney_pixel-platformer/Tilemap/tilemap_packed.png" width="360" height="162"/>
+ </tileset>
+ <tileset firstgid="293" name="victory_bed" tilewidth="18" tileheight="18" tilecount="1" columns="1">
+  <image source="../../../Downloads/pixel_bed.png" width="18" height="18"/>
  </tileset>
  <layer id="2" name="Layer1" width="90" height="40">
   <data encoding="csv">
@@ -488,9 +501,9 @@
   <object id="21" name="coin" gid="264" x="1056.14" y="123.707" width="18" height="18"/>
   <object id="22" name="coin" gid="264" x="1074.57" y="123.707" width="18" height="18"/>
   <object id="23" name="coin" gid="264" x="1351.1" y="92.982" width="18" height="18"/>
-  <object id="24" name="bed" x="1592.86" y="531.767">
+  <object id="25" name="bed" gid="293" x="1561.22" y="540.364" width="43.0116" height="24.0742">
    <properties>
-    <property name="bed" type="bool" value="true"/>
+    <property name="bed" type="bool" value="false"/>
    </properties>
   </object>
  </objectgroup>

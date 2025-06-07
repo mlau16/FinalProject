@@ -22,7 +22,7 @@ class Victory extends Phaser.Scene{
             color: "#555",
         }).setOrigin(0.5);
 
-        let restartHint = this.add.text(this.cameras.main.centerX, 800, "Press R to Restart", {
+        let restartHint = this.add.text(this.cameras.main.centerX, 500, "Press R to Restart", {
             fontSize: "24px",
             fontFamily: "'Chewy'",
             color: "#888"
@@ -38,14 +38,30 @@ class Victory extends Phaser.Scene{
         });
 
         this.rKey = this.input.keyboard.addKey("R");
+
+        let backText = this.add.text(720, 800, "Back to Main Menu", {
+            fontSize: "24px",
+            fontFamily: "'Chewy'",
+            color: "#ff8888",
+        }).setOrigin(0.5).setInteractive();
+
+        let snore = this.registry.get("snore");
+
+        backText.on('pointerdown', () => {
+            snore.stop();
+            this.scene.start("mainMenu");
+        });
     }
 
     update(){
+
         let snore = this.registry.get("snore");
 
         if(Phaser.Input.Keyboard.JustDown(this.rKey)){
             snore.stop();
-            this.scene.start("platformerScene");
+            let previousScene = this.registry.get("previousScene");
+            this.scene.start(previousScene);
+
         }
     }
 }
