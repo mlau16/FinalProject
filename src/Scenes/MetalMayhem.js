@@ -14,6 +14,7 @@ class Level2 extends Phaser.Scene {
         this.jumpCount = 0;
         this.maxJumps = 2;
         this.sceneChanging = false;
+        this.playerNearDoor = false;
     }
 
     create() {
@@ -208,6 +209,7 @@ class Level2 extends Phaser.Scene {
 
         // Door opens when player walks over it
         this.physics.add.overlap(my.sprite.player, this.doorGroup, (player,door) => {
+            this.playerNearDoor = true;
             door.setFrame(44);
             this.currentDoor = door;
         });
@@ -289,6 +291,15 @@ class Level2 extends Phaser.Scene {
         this.escapeKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ESC);
 
         this.menuVisible = false;
+
+        //Door Hint
+        this.doorHint = this.add.text(0, 0, 'SPACE to Enter', {
+            fontSize: '12px',
+            color: '#ffffff',
+            fontFamily: "'Chewy'",
+            backgroundColor: 'rgba(0, 0, 0, 0.5)'
+        }).setOrigin(0.5)
+          .setVisible(false); 
 
     }
     
@@ -401,6 +412,22 @@ class Level2 extends Phaser.Scene {
                 } else {
                     this.physics.world.resume();
                 }
+            }
+
+            //Door Hint
+            this.playerNearDoor = false;
+
+            this.physics.overlap(my.sprite.player, this.doorGroup, (player, door) => {
+                this.playerNearDoor = true;
+                this.currentDoor = door; 
+            });
+
+            if (this.playerNearDoor) {
+                this.doorHint.setVisible(true);
+                this.doorHint.x = this.currentDoor.x;
+                this.doorHint.y = this.currentDoor.y - 20;
+            } else {
+                this.doorHint.setVisible(false);
             }
 
     }

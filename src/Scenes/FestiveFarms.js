@@ -15,6 +15,7 @@ class Level3_1 extends Phaser.Scene {
         this.die = false;
         this.hasKey = false;
         this.doorUnlocked = false;
+        this.playerNearDoor = false;
         this.jumpCount = 0;
         this.maxJumps = 2;
         this.sceneChanging = false;
@@ -103,7 +104,7 @@ class Level3_1 extends Phaser.Scene {
 
         // Add physics
         this.physics.world.enable(this.door, Phaser.Physics.Arcade.STATIC_BODY);
-
+        this.doorGroup = this.add.group(this.door);
 
         this.physics.world.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels + 100);
         // Since createFromObjects returns an array of regular Sprites, we need to convert 
@@ -185,12 +186,39 @@ class Level3_1 extends Phaser.Scene {
         });
 
         this.physics.add.overlap(my.sprite.player, this.door, (player, door) => {
+            this.playerNearDoor = true;
             if (this.hasKey) {
                 this.canUnlockDoor = true;
                 this.currentDoor = door;  
             }
         });
         
+        //Hints
+
+        this.doorHint = this.add.text(0, 0, 'E to Unlock', {
+            fontSize: '12px',
+            color: '#ffffff',
+            fontFamily: "'Chewy'",
+            backgroundColor: 'rgba(0, 0, 0, 0.7)'
+        }).setOrigin(0.5)
+          .setVisible(false); 
+
+        this.doorHint2 = this.add.text(0, 0, 'SPACE to Enter', {
+            fontSize: '12px',
+            color: '#ffffff',
+            fontFamily: "'Chewy'",
+            backgroundColor: 'rgba(0, 0, 0, 0.7)'
+        }).setOrigin(0.5)
+          .setVisible(false); 
+
+          this.doorHint3 = this.add.text(0, 0, 'You need a key to Unlock!', {
+            fontSize: '12px',
+            color: '#ba0000',
+            fontFamily: "'Chewy'",
+            backgroundColor: 'rgba(0, 0, 0, 0.7)'
+        }).setOrigin(0.5)
+          .setVisible(false); 
+
         // Camera Settings
         this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
         this.cameras.main.startFollow(my.sprite.player, true, 0.25, 0.25); 
@@ -357,6 +385,37 @@ class Level3_1 extends Phaser.Scene {
                 this.key.y += (targetY - this.key.y);
             }
 
+            //Door Hints
+            this.playerNearDoor = false;
+
+            this.physics.overlap(my.sprite.player, this.doorGroup, (player, door) => {
+                this.playerNearDoor = true;
+                this.currentDoor = door; 
+            });
+
+            if (this.playerNearDoor && !this.canUnlockDoor && !this.doorUnlocked) {
+                this.doorHint3.setVisible(true);
+                this.doorHint3.x = this.currentDoor.x;
+                this.doorHint3.y = this.currentDoor.y - 20;
+            } else {
+                this.doorHint3.setVisible(false);
+            }
+
+            if (this.playerNearDoor && this.canUnlockDoor) {
+                this.doorHint.setVisible(true);
+                this.doorHint.x = this.currentDoor.x;
+                this.doorHint.y = this.currentDoor.y - 20;
+            } else {
+                this.doorHint.setVisible(false);
+            }
+
+            if (this.playerNearDoor && this.doorUnlocked) {
+                this.doorHint2.setVisible(true);
+                this.doorHint2.x = this.currentDoor.x;
+                this.doorHint2.y = this.currentDoor.y - 20;
+            } else {
+                this.doorHint2.setVisible(false);
+            }
             // Unlocks door if character has key
             if (this.canUnlockDoor && this.hasKey && Phaser.Input.Keyboard.JustDown(this.eKey)) {
                 console.log("Unlocking door!");
