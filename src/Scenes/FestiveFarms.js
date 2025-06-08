@@ -6,7 +6,7 @@ class Level3_1 extends Phaser.Scene {
     init() {
         // variables and settings
         this.ACCELERATION = 600;
-        this.DRAG = 600;    // DRAG < ACCELERATION = icy slide
+        this.DRAG = 600;   
         this.physics.world.gravity.y = 1400;
         this.JUMP_VELOCITY = -600;
         this.PARTICLE_VELOCITY = 50;
@@ -21,12 +21,13 @@ class Level3_1 extends Phaser.Scene {
     }
 
     create() {
-
+        // Add sounds to registry 
         this.registry.set("bgm", this.sound.add("music", { loop: true, volume: 0.5}));
         this.registry.get("bgm").play();
 
         this.registry.set("snore", this.sound.add("snoring", { loop: true}));
 
+        //Background Elements
         let backdrop = this.add.rectangle(0, 0, this.cameras.main.width, this.cameras.main.height, 0xFFFFFF).setOrigin(0, 0).setScrollFactor(0).setDepth(-11);
         let sky = this.add.rectangle(0, 0, this.cameras.main.width, this.cameras.main.height, 0xff9633, 0.9).setOrigin(0, 0).setScrollFactor(0).setDepth(-11);
 
@@ -70,6 +71,7 @@ class Level3_1 extends Phaser.Scene {
             spikes: true
         });
 
+        // Create Objects
         this.coins = this.map.createFromObjects("Objects", {
             name: "coin",
             key: "kenny_tilemap_sheet",
@@ -86,6 +88,7 @@ class Level3_1 extends Phaser.Scene {
             frame: 27,
         });
 
+        // Key visuals
         this.key = keyObj[0];
         this.physics.world.enable(this.key, Phaser.Physics.Arcade.STATIC_BODY);
 
@@ -98,6 +101,7 @@ class Level3_1 extends Phaser.Scene {
             ease: 'Sine.easeInOut'        
         });
 
+        // Add physics
         this.physics.world.enable(this.door, Phaser.Physics.Arcade.STATIC_BODY);
 
 
@@ -107,6 +111,7 @@ class Level3_1 extends Phaser.Scene {
         this.physics.world.enable(this.coins, Phaser.Physics.Arcade.STATIC_BODY);
         this.coinGroup = this.add.group(this.coins);
 
+        // Spawn point
         let spawnPoint = this.map.findObject("Objects", obj => obj.name === "PlayerSpawn");
 
         // set up player avatar
@@ -134,17 +139,13 @@ class Level3_1 extends Phaser.Scene {
             this.physics.world.debugGraphic.clear()
         }, this);
 
-        // movement vfx
-
+        // VFX
         my.vfx.walking = this.add.particles(0, 0, "kenny-particles", {
             frame: ['smoke_03.png', 'smoke_09.png'],
-            // TODO: Try: add random: true
             random:true,
             scale: {start: 0.03, end: 0.05},
-            // TODO: Try: maxAliveParticles: 8,
             maxAliveParticles: 4,
             lifespan: 350,
-            // TODO: Try: gravityY: -400,
             alpha: {start: 0.5, end: 0.1}, 
         });
 
@@ -174,6 +175,7 @@ class Level3_1 extends Phaser.Scene {
 
         my.vfx.coin.stop();
 
+        // Key/Door implementing
         this.physics.add.overlap(my.sprite.player, this.key, (player, key) => {
             if (!this.hasKey) {
                 this.hasKey = true;
@@ -189,18 +191,20 @@ class Level3_1 extends Phaser.Scene {
             }
         });
         
-
+        // Camera Settings
         this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
         this.cameras.main.startFollow(my.sprite.player, true, 0.25, 0.25); 
         this.cameras.main.setDeadzone(50, 50);
         this.cameras.main.setZoom(this.SCALE);
 
+        // Score
         this.scoreText = this.add.text(380, 240, "Score: 0", {
             fontFamily: "'Chewy",
             fontSize: '14px',
             fill: '#ffffff'
         }).setScrollFactor(0);
 
+        // Drop menu
         this.menu = this.add.container(this.scale.width / 2, this.scale.height / 2); 
     
         let bg = this.add.rectangle(0, 0, 350, 250, 0x000000, 0.8);
@@ -295,7 +299,7 @@ class Level3_1 extends Phaser.Scene {
                 my.vfx.walking.stop();
             }
 
-        
+            // Jump
             if(!my.sprite.player.body.blocked.down) {
                 my.sprite.player.anims.play('jump');
             }
@@ -308,7 +312,8 @@ class Level3_1 extends Phaser.Scene {
             if (!cursors.up.isDown) {
                 this.jumpReleased = true;
             }
-    
+            
+            // Double Jump
             if (Phaser.Input.Keyboard.JustDown(cursors.up) && this.jumpCount === 0) {
                 my.sprite.player.body.setVelocityY(this.JUMP_VELOCITY);
                 this.sound.play("jump");
@@ -321,6 +326,7 @@ class Level3_1 extends Phaser.Scene {
                 this.jumpReleased = false;
             }
 
+            // Falling out of the world
             if (!this.die && my.sprite.player.y > this.map.heightInPixels + 10) {
                 this.die = true; 
                 this.sound.play("death");
@@ -332,6 +338,7 @@ class Level3_1 extends Phaser.Scene {
                 });
             }
 
+            // Set max speed
             let maxSpeed = 300;  
 
             if (my.sprite.player.body.velocity.x > maxSpeed) {
@@ -341,6 +348,7 @@ class Level3_1 extends Phaser.Scene {
                 my.sprite.player.body.velocity.x = -maxSpeed;
             }
 
+            // Key follows character
             if (this.hasKey) {
                 let targetX = my.sprite.player.x - 10;
                 let targetY = my.sprite.player.y - 10;
@@ -349,6 +357,7 @@ class Level3_1 extends Phaser.Scene {
                 this.key.y += (targetY - this.key.y);
             }
 
+            // Unlocks door if character has key
             if (this.canUnlockDoor && this.hasKey && Phaser.Input.Keyboard.JustDown(this.eKey)) {
                 console.log("Unlocking door!");
                 this.currentDoor.setFrame(97);  
@@ -379,6 +388,7 @@ class Level3_1 extends Phaser.Scene {
                 });
             }
             
+            // Drop menu pauses world
             if (Phaser.Input.Keyboard.JustDown(this.escapeKey)) {
                 this.menuVisible = !this.menuVisible;
                 this.menu.setVisible(this.menuVisible);

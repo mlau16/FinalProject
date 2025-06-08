@@ -4,7 +4,7 @@ class CreditsScene extends Phaser.Scene {
     }
 
     create() {
-        //Background movement
+        // Background movement
         this.cameras.main.setBounds(0, 0, 2000, 600);
         this.tweens.add({
         targets: this.cameras.main,
@@ -15,7 +15,7 @@ class CreditsScene extends Phaser.Scene {
         ease: 'Sine.easeInOut'
         }); 
 
-        //Background Elements
+        // ackground Elements
         let backdrop = this.add.rectangle(0, 0, this.cameras.main.width, this.cameras.main.height, 0xFFFFFF).setOrigin(0, 0).setScrollFactor(0).setDepth(-11);
         let sky = this.add.rectangle(0, 0, this.cameras.main.width, this.cameras.main.height, 0x41609e, 0.9).setOrigin(0, 0).setScrollFactor(0).setDepth(-11);
 
@@ -55,7 +55,7 @@ class CreditsScene extends Phaser.Scene {
         this.add.image(1050, 750, "tree1").setOrigin(0, 0).setScrollFactor(0.3).setDepth(-8).setScale(0.2);
         this.add.image(1100, 730, "tree1").setOrigin(0, 0).setScrollFactor(0.3).setDepth(-8).setScale(0.3);
 
-        //Credits box
+        // Credits box
         let bg = this.add.rectangle(720, 450, 920, 650, 0x000000, 0.5);
 
         bg.setScrollFactor(0);
@@ -76,7 +76,7 @@ class CreditsScene extends Phaser.Scene {
         this.add.text(570, 440, 'Honorable Mention:', { fontSize: '20px', color: '#ffffff', fontFamily: "'Chewy'"}).setOrigin(0.5).setScrollFactor(0);
         this.add.text(870, 440, 'ChatGPT', { fontSize: '20px', color: '#f2ecb1', fontFamily: "'Chewy'"}).setOrigin(0.5).setScrollFactor(0);
 
-        //Back Button
+        // Back Button
         let backText = this.add.text(720, 700, "Back to Main Menu", {
             fontSize: "24px",
             fontFamily: "'Chewy'",

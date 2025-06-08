@@ -6,7 +6,7 @@ class Level3_2 extends Phaser.Scene {
     init() {
         // variables and settings
         this.ACCELERATION = 600;
-        this.DRAG = 600;    // DRAG < ACCELERATION = icy slide
+        this.DRAG = 600;   
         this.physics.world.gravity.y = 1400;
         this.JUMP_VELOCITY = -600;
         this.PARTICLE_VELOCITY = 50;
@@ -19,7 +19,7 @@ class Level3_2 extends Phaser.Scene {
     }
 
     create() {
-        
+        // Background audio
         this.bgm = this.sound.add('music', {
             loop: true,
             volume: 0.5
@@ -27,7 +27,7 @@ class Level3_2 extends Phaser.Scene {
 
         this.registry.set("snore", this.sound.add("snoring", { loop: true}));
 
-
+        // Backdrop
         let backdrop = this.add.rectangle(0, 0, this.cameras.main.width, this.cameras.main.height, 0xc7ced6).setOrigin(0, 0).setScrollFactor(0).setDepth(-11);
      
         // Create a new tilemap game object which uses 18x18 pixel tiles, and is
@@ -48,6 +48,7 @@ class Level3_2 extends Phaser.Scene {
             collides: true
         });
 
+        // Create Objects 
         this.coins = this.map.createFromObjects("Objects", {
             name: "coin",
             key: "kenny_tilemap_sheet",
@@ -61,6 +62,7 @@ class Level3_2 extends Phaser.Scene {
             y: 90
         });
 
+        // Add physics
         this.physics.world.enable(this.bed, Phaser.Physics.Arcade.STATIC_BODY);
         this.bedGroup = this.add.group(this.bed);
 
@@ -134,19 +136,23 @@ class Level3_2 extends Phaser.Scene {
 
         my.vfx.coin.stop();
 
+        // Camera Settings
         this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
         this.cameras.main.startFollow(my.sprite.player, true, 0.25, 0.25); 
         this.cameras.main.setDeadzone(50, 50);
         this.cameras.main.setZoom(this.SCALE * 1.5);
 
+        // Score
         this.scoreText = this.add.text(490, 310, "Score: " + this.registry.get("score"), {
             fontFamily: "'Chewy",
             fontSize: '10px',
             fill: '#ffffff'
         }).setScrollFactor(0);
 
+        // Checks for winning condition
         this.physics.add.overlap(my.sprite.player, this.bedGroup, this.onBedOverlap, null, this);
 
+        // Drop menu
         this.menu = this.add.container(this.scale.width / 2, this.scale.height / 2); 
     
         let bg = this.add.rectangle(0, 0, 350, 250, 0x000000, 0.8);
@@ -241,7 +247,7 @@ class Level3_2 extends Phaser.Scene {
                 my.vfx.walking.stop();
             }
 
-        
+            // Jump
             if(!my.sprite.player.body.blocked.down) {
                 my.sprite.player.anims.play('jump');
             }
@@ -254,7 +260,8 @@ class Level3_2 extends Phaser.Scene {
             if (!cursors.up.isDown) {
                 this.jumpReleased = true;
             }
-    
+
+            // Double jump
             if (Phaser.Input.Keyboard.JustDown(cursors.up) && this.jumpCount === 0) {
                 my.sprite.player.body.setVelocityY(this.JUMP_VELOCITY);
                 this.sound.play("jump");
@@ -266,7 +273,8 @@ class Level3_2 extends Phaser.Scene {
                 this.jumpCount++;
                 this.jumpReleased = false;
             }
-
+            
+            // Set max speed
             let maxSpeed = 300;  
 
             if (my.sprite.player.body.velocity.x > maxSpeed) {
@@ -276,6 +284,7 @@ class Level3_2 extends Phaser.Scene {
                 my.sprite.player.body.velocity.x = -maxSpeed;
             }
 
+            // Drop menu pauses game
             if (Phaser.Input.Keyboard.JustDown(this.escapeKey)) {
                 this.menuVisible = !this.menuVisible;
                 this.menu.setVisible(this.menuVisible);
@@ -288,6 +297,7 @@ class Level3_2 extends Phaser.Scene {
             }
     }
 
+    //When player wins
     onBedOverlap(player, bed) {
         console.log("Bed overlaped");
         if (this.sceneChanging) return;

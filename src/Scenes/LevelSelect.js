@@ -5,7 +5,7 @@ class LevelSelect extends Phaser.Scene {
     }
 
     create() {
-
+        // Moving Background
         this.cameras.main.setBounds(0, 0, 2000, 600);
         this.tweens.add({
         targets: this.cameras.main,
@@ -15,7 +15,8 @@ class LevelSelect extends Phaser.Scene {
         repeat: -1,
         ease: 'Sine.easeInOut'
         }); 
-
+        
+        //Background Elements
         let backdrop = this.add.rectangle(0, 0, this.cameras.main.width, this.cameras.main.height, 0xFFFFFF).setOrigin(0, 0).setScrollFactor(0).setDepth(-11);
         let sky = this.add.rectangle(0, 0, this.cameras.main.width, this.cameras.main.height, 0x41609e, 0.9).setOrigin(0, 0).setScrollFactor(0).setDepth(-11);
 
@@ -32,7 +33,7 @@ class LevelSelect extends Phaser.Scene {
         this.add.image(1050, 750, "tree1").setOrigin(0, 0).setScrollFactor(0.3).setDepth(-8).setScale(0.2);
         this.add.image(1100, 730, "tree1").setOrigin(0, 0).setScrollFactor(0.3).setDepth(-8).setScale(0.3);
         
-
+        // Buttons
         this.add.text(720, 300, "Select a Level", {
             fontSize: "48px",
             fontFamily: "'Chewy'",

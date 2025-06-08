@@ -17,7 +17,7 @@ class Level2 extends Phaser.Scene {
     }
 
     create() {
-        
+        // Background audio
         this.bgm = this.sound.add('music', {
             loop: true,
             volume: 0.5
@@ -26,6 +26,7 @@ class Level2 extends Phaser.Scene {
 
         this.registry.set("snore", this.sound.add("snoring", { loop: true}));
 
+        //Background Elements
         let sky = this.add.rectangle(0, 0, this.cameras.main.width, this.cameras.main.height, 0x61462c, 0.9).setOrigin(0, 0).setScrollFactor(0).setDepth(-11);
 
         this.add.image(0, 300, "cloud").setOrigin(0, 0).setScrollFactor(0.1).setDepth(-10).setScale(1.2).setAlpha(0.3);
@@ -67,6 +68,7 @@ class Level2 extends Phaser.Scene {
             spikes: true
         });
 
+        // Create Objects
         this.coins = this.map.createFromObjects("Objects", {
             name: "coin",
             key: "kenny_tilemap_sheet",
@@ -79,6 +81,7 @@ class Level2 extends Phaser.Scene {
             frame: 0
         });
 
+        // Physics
         this.physics.world.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels + 100);
         
         this.physics.world.enable(this.coins, Phaser.Physics.Arcade.STATIC_BODY);
@@ -89,6 +92,7 @@ class Level2 extends Phaser.Scene {
         this.physics.world.enable(this.bed, Phaser.Physics.Arcade.STATIC_BODY);
         this.bedGroup = this.add.group(this.bed);
 
+        // Doors setup
         this.doors = this.map.createFromObjects("Doors", {
              name: "door", 
              key: "industrial_tilemap_sheet", 
@@ -135,13 +139,10 @@ class Level2 extends Phaser.Scene {
 
         my.vfx.walking = this.add.particles(0, 0, "kenny-particles", {
             frame: ['smoke_03.png', 'smoke_09.png'],
-            // TODO: Try: add random: true
             random:true,
             scale: {start: 0.03, end: 0.05},
-            // TODO: Try: maxAliveParticles: 8,
             maxAliveParticles: 4,
             lifespan: 350,
-            // TODO: Try: gravityY: -400,
             alpha: {start: 0.5, end: 0.1}, 
         });
 
@@ -181,7 +182,7 @@ class Level2 extends Phaser.Scene {
         });
         my.vfx.disintegrate.stop();
 
-
+        // Winning condition
         this.physics.add.overlap(my.sprite.player, this.bedGroup, () => {
             if (this.sceneChanging) return;
             this.sceneChanging = true;
@@ -205,22 +206,26 @@ class Level2 extends Phaser.Scene {
             });
         });
 
+        // Door opens when player walks over it
         this.physics.add.overlap(my.sprite.player, this.doorGroup, (player,door) => {
             door.setFrame(44);
             this.currentDoor = door;
         });
         
+        // Camera Settings
         this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
         this.cameras.main.startFollow(my.sprite.player, true, 0.25, 0.25); 
         this.cameras.main.setDeadzone(50, 50);
         this.cameras.main.setZoom(this.SCALE);
 
+        // Score
         this.scoreText = this.add.text(380, 240, "Score: 0", {
             fontFamily: "'Chewy",
             fontSize: '14px',
             fill: '#ffffff'
         }).setScrollFactor(0);
 
+        // Drop menu
         this.menu = this.add.container(this.scale.width / 2, this.scale.height / 2); 
     
         let bg = this.add.rectangle(0, 0, 350, 250, 0x000000, 0.8);
@@ -316,7 +321,7 @@ class Level2 extends Phaser.Scene {
                 my.vfx.walking.stop();
             }
 
-        
+            // Jump
             if(!my.sprite.player.body.blocked.down) {
                 my.sprite.player.anims.play('jump');
             }
@@ -329,7 +334,8 @@ class Level2 extends Phaser.Scene {
             if (!cursors.up.isDown) {
                 this.jumpReleased = true;
             }
-    
+
+            // Double Jump
             if (Phaser.Input.Keyboard.JustDown(cursors.up) && this.jumpCount === 0) {
                 my.sprite.player.body.setVelocityY(this.JUMP_VELOCITY);
                 this.sound.play("jump");
@@ -342,6 +348,7 @@ class Level2 extends Phaser.Scene {
                 this.jumpReleased = false;
             }
 
+            // Set max speed
             let maxSpeed = 300;  
 
             if (my.sprite.player.body.velocity.x > maxSpeed) {
@@ -351,6 +358,7 @@ class Level2 extends Phaser.Scene {
                 my.sprite.player.body.velocity.x = -maxSpeed;
             }
 
+            // Falling in acid implementing
             const tile = this.layer1.getTileAtWorldXY(
                 my.sprite.player.x,
                 my.sprite.player.y + my.sprite.player.height,
@@ -373,6 +381,7 @@ class Level2 extends Phaser.Scene {
                 });
             }
              
+            // Teleports player 
             if (this.currentDoor && Phaser.Input.Keyboard.JustDown(this.teleportKey)) {
                 this.teleportToDoor(this.currentDoor.linkedTo);
             }
@@ -382,6 +391,7 @@ class Level2 extends Phaser.Scene {
                 this.currentDoor = null;
             }
 
+            // Drop menu pauses game
             if (Phaser.Input.Keyboard.JustDown(this.escapeKey)) {
                 this.menuVisible = !this.menuVisible;
                 this.menu.setVisible(this.menuVisible);
@@ -395,6 +405,7 @@ class Level2 extends Phaser.Scene {
 
     }
 
+    // Binds doors to each other
     teleportToDoor(targetName) {
         let targetDoor = this.doorGroup.getChildren().find(door => door.doorNum === targetName);
         if (targetDoor) {

@@ -62,7 +62,7 @@ class MainMenu extends Phaser.Scene {
             color: "#ffffff",
         }).setOrigin(0.5).setScrollFactor(0);
 
-        // Add Start Game button (clickable text)
+        // Start Game button 
         let startText = this.add.text(480, 500, "Select Level", {
             fontSize: "32px",
             fontFamily: "'Chewy'",
@@ -81,7 +81,7 @@ class MainMenu extends Phaser.Scene {
             this.scene.start("levelSelect"); 
         });
 
-        //Credits Button
+        // Credits Button
         let creditsText = this.add.text(960, 500, "Credits", {
             fontSize: "32px",
             fontFamily: "'Chewy'",
