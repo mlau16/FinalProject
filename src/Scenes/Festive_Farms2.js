@@ -5,7 +5,7 @@ class Level3_2 extends Phaser.Scene {
 
     init() {
         // variables and settings
-        this.ACCELERATION = 600;
+        this.ACCELERATION = 1000;
         this.DRAG = 600;   
         this.physics.world.gravity.y = 1400;
         this.JUMP_VELOCITY = -600;
@@ -281,7 +281,7 @@ class Level3_2 extends Phaser.Scene {
             }
             
             // Set max speed
-            let maxSpeed = 300;  
+            let maxSpeed = 250;  
 
             if (my.sprite.player.body.velocity.x > maxSpeed) {
                 my.sprite.player.body.velocity.x = maxSpeed;

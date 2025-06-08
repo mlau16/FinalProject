@@ -43,18 +43,26 @@ class Victory extends Phaser.Scene{
         this.rKey = this.input.keyboard.addKey("R");
 
         // Back to main menu button
-        let backText = this.add.text(720, 800, "Back to Main Menu", {
+       let backText = this.add.text(720, 800, "Back to Main Menu", {
             fontSize: "24px",
             fontFamily: "'Chewy'",
             color: "#ff8888",
-        }).setOrigin(0.5).setInteractive();
+        }).setOrigin(0.5).setInteractive().setScrollFactor(0);
 
+        backText.on('pointerover', () => {
+            this.sound.play("rollover");
+            backText.setAlpha(0.5);
+        });
+        backText.on('pointerout', () => {
+            backText.setAlpha(1);
+        });
         let snore = this.registry.get("snore");
 
         backText.on('pointerdown', () => {
+            this.sound.play("select");
             snore.stop();
             this.scene.start("mainMenu");
-        });
+        }).setScrollFactor(0);
     }
 
     update(){
