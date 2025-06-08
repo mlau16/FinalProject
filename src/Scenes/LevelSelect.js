@@ -47,6 +47,7 @@ class LevelSelect extends Phaser.Scene {
         }).setOrigin(0.5).setInteractive().setScrollFactor(0);
 
         backText.on('pointerover', () => {
+            this.sound.play("rollover");
             backText.setAlpha(0.5);
         });
         backText.on('pointerout', () => {
@@ -54,6 +55,7 @@ class LevelSelect extends Phaser.Scene {
         });
 
         backText.on('pointerdown', () => {
+            this.sound.play("select");
             this.scene.start("mainMenu");
         }).setScrollFactor(0);
 
@@ -68,12 +70,14 @@ class LevelSelect extends Phaser.Scene {
         level1Button.setScrollFactor(0)
         level1Button.setScale(5);
         level1Button.on('pointerover', () => {
+            this.sound.play("rollover");
             level1Button.setAlpha(0.5);  
         });
         level1Button.on('pointerout', () => {
             level1Button.setAlpha(1);
         });
         level1Button.on('pointerdown', () => {
+            this.sound.play("select");
             this.scene.start('level1');
         });
 
@@ -88,6 +92,7 @@ class LevelSelect extends Phaser.Scene {
         level2Button.setScrollFactor(0);
         level2Button.setScale(5);
         level2Button.on('pointerover', () => {
+            this.sound.play("rollover");
             level2Button.setAlpha(0.5);  
         });
         
@@ -95,6 +100,7 @@ class LevelSelect extends Phaser.Scene {
             level2Button.setAlpha(1);
         });
         level2Button.on('pointerdown', () => {
+            this.sound.play("select");
             this.scene.start('level2');
         });
 
@@ -109,6 +115,7 @@ class LevelSelect extends Phaser.Scene {
         level3Button.setScrollFactor(0);
         level3Button.setScale(5);
         level3Button.on('pointerover', () => {
+            this.sound.play("rollover");
             level3Button.setAlpha(0.5);  
         });
         
@@ -116,6 +123,7 @@ class LevelSelect extends Phaser.Scene {
             level3Button.setAlpha(1);
         });
         level3Button.on('pointerdown', () => {
+            this.sound.play("select");
             this.scene.start('level3_1');
         });
     }

@@ -180,7 +180,7 @@ class Level3_1 extends Phaser.Scene {
         this.physics.add.overlap(my.sprite.player, this.key, (player, key) => {
             if (!this.hasKey) {
                 this.hasKey = true;
-                this.sound.play("clink");  
+                this.sound.play("key");  
                 this.key.body.enable = false; 
             }
         });
@@ -245,12 +245,14 @@ class Level3_1 extends Phaser.Scene {
         restartButton.setScrollFactor(0).setInteractive({ useHandCursor: true });
 
         restartButton.on('pointerdown', () => {
+            this.sound.play("select");
             this.registry.get("bgm").stop();
             this.scene.stop();         
             this.scene.restart(); 
         });
 
         restartButton.on('pointerover', () => {
+            this.sound.play("rollover");
             restartButton.setAlpha(0.5);
         });
         restartButton.on('pointerout', () => {
@@ -261,12 +263,14 @@ class Level3_1 extends Phaser.Scene {
         backButton.setScrollFactor(0).setInteractive({ useHandCursor: true });
 
         backButton.on('pointerdown', () => {
+            this.sound.play("select");
             this.registry.get("bgm").stop();
             this.scene.stop();         
             this.scene.start('mainMenu'); 
         });
 
         backButton.on('pointerover', () => {
+            this.sound.play("rollover");
             backButton.setAlpha(0.5);
         });
         backButton.on('pointerout', () => {
@@ -277,12 +281,14 @@ class Level3_1 extends Phaser.Scene {
         levelButton.setScrollFactor(0).setInteractive({ useHandCursor: true });
 
         levelButton.on('pointerdown', () => {
+            this.sound.play("select");
             this.registry.get("bgm").stop();
             this.scene.stop();         
             this.scene.start('levelSelect'); 
         });
 
         levelButton.on('pointerover', () => {
+            this.sound.play("rollover");
             levelButton.setAlpha(0.5);
         });
         levelButton.on('pointerout', () => {
@@ -419,6 +425,7 @@ class Level3_1 extends Phaser.Scene {
             // Unlocks door if character has key
             if (this.canUnlockDoor && this.hasKey && Phaser.Input.Keyboard.JustDown(this.eKey)) {
                 console.log("Unlocking door!");
+                this.sound.play("doorUnlock");
                 this.currentDoor.setFrame(97);  
                 this.hasKey = false; 
                 this.key.visible = false;

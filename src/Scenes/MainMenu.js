@@ -71,6 +71,7 @@ class MainMenu extends Phaser.Scene {
 
 
         startText.on('pointerover', () => {
+            this.sound.play("rollover");
             startText.setAlpha(0.5);
         });
         startText.on('pointerout', () => {
@@ -78,6 +79,7 @@ class MainMenu extends Phaser.Scene {
         });
 
         startText.on('pointerdown', () => {
+            this.sound.play("select");
             this.scene.start("levelSelect"); 
         });
 
@@ -89,6 +91,7 @@ class MainMenu extends Phaser.Scene {
         }).setOrigin(0.5).setInteractive().setScrollFactor(0);
       
         creditsText.on('pointerover', () => {
+            this.sound.play("rollover");
             creditsText.setAlpha(0.5);
         });
         creditsText.on('pointerout', () => {
@@ -96,6 +99,7 @@ class MainMenu extends Phaser.Scene {
         });
 
         creditsText.on('pointerdown', () => {
+            this.sound.play("select");
             this.scene.start("creditsScene"); 
         });
     }

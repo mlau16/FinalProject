@@ -191,12 +191,14 @@ class Level1 extends Phaser.Scene {
         restartButton.setScrollFactor(0).setInteractive({ useHandCursor: true });
 
         restartButton.on('pointerdown', () => {
+            this.sound.play("select");
             this.bgm.stop();
             this.scene.stop();         
             this.scene.restart(); 
         });
 
         restartButton.on('pointerover', () => {
+            this.sound.play("rollover");
             restartButton.setAlpha(0.5);
         });
         restartButton.on('pointerout', () => {
@@ -207,12 +209,14 @@ class Level1 extends Phaser.Scene {
         backButton.setScrollFactor(0).setInteractive({ useHandCursor: true });
 
         backButton.on('pointerdown', () => {
+            this.sound.play("select");
             this.bgm.stop();
             this.scene.stop();         
             this.scene.start('mainMenu'); 
         });
 
         backButton.on('pointerover', () => {
+            this.sound.play("rollover");
             backButton.setAlpha(0.5);
         });
         backButton.on('pointerout', () => {
@@ -223,12 +227,14 @@ class Level1 extends Phaser.Scene {
         levelButton.setScrollFactor(0).setInteractive({ useHandCursor: true });
 
         levelButton.on('pointerdown', () => {
+            this.sound.play("select");
             this.bgm.stop();
             this.scene.stop();         
             this.scene.start('levelSelect'); 
         });
 
         levelButton.on('pointerover', () => {
+            this.sound.play("rollover");
             levelButton.setAlpha(0.5);
         });
         levelButton.on('pointerout', () => {

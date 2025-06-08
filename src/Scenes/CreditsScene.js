@@ -84,6 +84,7 @@ class CreditsScene extends Phaser.Scene {
         }).setOrigin(0.5).setInteractive().setScrollFactor(0);
 
         backText.on('pointerover', () => {
+            this.sound.play("rollover");
             backText.setAlpha(0.5);
         });
         backText.on('pointerout', () => {
@@ -91,6 +92,7 @@ class CreditsScene extends Phaser.Scene {
         });
 
         backText.on('pointerdown', () => {
+            this.sound.play("select");
             this.scene.start("mainMenu");
         }).setScrollFactor(0);
     }

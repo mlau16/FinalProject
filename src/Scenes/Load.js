@@ -64,6 +64,10 @@ class Load extends Phaser.Scene {
         this.load.audio("death", "pixel_death.mp3"); //Pixel Explosion by Lumora_Studios
         this.load.audio("snoring", "snoring.mp3");
         this.load.audio("acidBurn", "acidBurn.mp3"); //Acid burn, sizzle 14 by Zapsplat
+        this.load.audio("doorUnlock", "doorUnlock.mp3");
+        this.load.audio("key", "key.mp3");
+        this.load.audio("rollover", "rollover2.ogg");
+        this.load.audio("select", "click1.ogg");
 
     }
 
