@@ -1,6 +1,6 @@
-class MainMenu extends Phaser.Scene {
+class CreditsScene extends Phaser.Scene {
     constructor() {
-        super("mainMenu");
+        super("creditsScene");
     }
 
     create() {
@@ -55,48 +55,43 @@ class MainMenu extends Phaser.Scene {
         this.add.image(1050, 750, "tree1").setOrigin(0, 0).setScrollFactor(0.3).setDepth(-8).setScale(0.2);
         this.add.image(1100, 730, "tree1").setOrigin(0, 0).setScrollFactor(0.3).setDepth(-8).setScale(0.3);
 
-        // Add title text
-        this.add.text(720, 300, "Napstronaut", {
-            fontSize: "72px",
-            fontFamily: "'Chewy'",
-            color: "#ffffff",
-        }).setOrigin(0.5).setScrollFactor(0);
+        //Credits box
+        let bg = this.add.rectangle(720, 450, 920, 650, 0x000000, 0.5);
 
-        // Add Start Game button (clickable text)
-        let startText = this.add.text(480, 500, "Select Level", {
-            fontSize: "32px",
+        bg.setScrollFactor(0);
+
+        this.add.text(720, 200, 'Credits', { fontSize: '32px', color: '#ffffff', fontFamily: "'Chewy'"}).setOrigin(0.5).setScrollFactor(0);
+        this.add.text(570, 250, 'Game Content', { fontSize: '20px', color: '#ffffff', fontFamily: "'Chewy'"}).setOrigin(0.5).setScrollFactor(0);
+        this.add.text(870, 250, 'Mandy Lau', { fontSize: '20px', color: '#f2ecb1', fontFamily: "'Chewy'"}).setOrigin(0.5).setScrollFactor(0);
+
+        this.add.text(570, 300, 'Assets', { fontSize: '20px', color: '#ffffff', fontFamily: "'Chewy'"}).setOrigin(0.5).setScrollFactor(0);
+        this.add.text(870, 300, 'Kenney\'s Assets', { fontSize: '20px', color: '#f2ecb1', fontFamily: "'Chewy'"}).setOrigin(0.5).setScrollFactor(0);
+        
+        this.add.text(570, 350, 'Audio', { fontSize: '20px', color: '#ffffff', fontFamily: "'Chewy'"}).setOrigin(0.5).setScrollFactor(0);
+        this.add.text(870, 375, '\"Game Music Loop 7\" by XtremeFreddy \n \"Pixel Explosion\" by Lumora_Studios \n \"Acid burn, sizzle 14\" by Zapsplat', { fontSize: '20px', color: '#f2ecb1', fontFamily: "'Chewy'"}).setOrigin(0.5).setScrollFactor(0);
+
+        this.add.text(570, 350, '', { fontSize: '20px', color: '#ffffff', fontFamily: "'Chewy'"}).setOrigin(0.5).setScrollFactor(0);
+        this.add.text(870, 375, '\"Game Music Loop 7\" by XtremeFreddy \n \"Pixel Explosion\" by Lumora_Studios \n \"Acid burn, sizzle 14\" by Zapsplat', { fontSize: '20px', color: '#f2ecb1', fontFamily: "'Chewy'"}).setOrigin(0.5).setScrollFactor(0);
+
+        this.add.text(570, 440, 'Honorable Mention:', { fontSize: '20px', color: '#ffffff', fontFamily: "'Chewy'"}).setOrigin(0.5).setScrollFactor(0);
+        this.add.text(870, 440, 'ChatGPT', { fontSize: '20px', color: '#f2ecb1', fontFamily: "'Chewy'"}).setOrigin(0.5).setScrollFactor(0);
+
+        //Back Button
+        let backText = this.add.text(720, 700, "Back to Main Menu", {
+            fontSize: "24px",
             fontFamily: "'Chewy'",
-            color: "#f2ecb1",
+            color: "#ff8888",
         }).setOrigin(0.5).setInteractive().setScrollFactor(0);
 
-
-        startText.on('pointerover', () => {
-            startText.setAlpha(0.5);
+        backText.on('pointerover', () => {
+            backText.setAlpha(0.5);
         });
-        startText.on('pointerout', () => {
-            startText.setAlpha(1);
-        });
-
-        startText.on('pointerdown', () => {
-            this.scene.start("levelSelect"); 
+        backText.on('pointerout', () => {
+            backText.setAlpha(1);
         });
 
-        //Credits Button
-        let creditsText = this.add.text(960, 500, "Credits", {
-            fontSize: "32px",
-            fontFamily: "'Chewy'",
-            color: "#f2ecb1",
-        }).setOrigin(0.5).setInteractive().setScrollFactor(0);
-      
-        creditsText.on('pointerover', () => {
-            creditsText.setAlpha(0.5);
-        });
-        creditsText.on('pointerout', () => {
-            creditsText.setAlpha(1);
-        });
-
-        creditsText.on('pointerdown', () => {
-            this.scene.start("creditsScene"); 
-        });
+        backText.on('pointerdown', () => {
+            this.scene.start("mainMenu");
+        }).setScrollFactor(0);
     }
 }
